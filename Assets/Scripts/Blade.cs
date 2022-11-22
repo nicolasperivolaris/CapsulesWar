@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Blade : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()
@@ -14,5 +15,13 @@ public class Player : MonoBehaviour
     void Update()
     {
         
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        Enemy e = collision.gameObject.GetComponent<Enemy>();
+        if (e != null)
+            Destroy(e.gameObject);
+
     }
 }

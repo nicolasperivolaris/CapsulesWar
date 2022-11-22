@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FollowCamera : MonoBehaviour
+public class PlayerBody : MonoBehaviour
 {
 
-    public GameObject ToFollow;
+    public Valve.VR.InteractionSystem.Player ToFollow;
     // Start is called before the first frame update
     void Start()
     {
@@ -15,6 +15,6 @@ public class FollowCamera : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.position = ToFollow.transform.position;
+        transform.position = ToFollow.hmdTransform.position;
     }
 }
