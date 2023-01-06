@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml.Schema;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -7,7 +8,7 @@ public class Chromosome : MonoBehaviour
 {
     delegate void Action();
     public List<Gene> genes { get;  }
-    int totalWeight;
+    internal int totalWeight;
 
     public Chromosome()
     {
@@ -48,6 +49,7 @@ public class Chromosome : MonoBehaviour
         {
             this.name = name;
             this.value = value;
+            totalWeight += value;
             this.minValue = minValue;
             this.expression = e;
         }

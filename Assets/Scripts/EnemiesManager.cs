@@ -9,6 +9,8 @@ public class EnemiesManager : MonoBehaviour
 {
     public GameObject PrefabEnemy;
     public GameObject Player;
+    private float elapsedTime = 0f;
+    public float interval = 2f;
     // Start is called before the first frame update
     public Saber saber;
     void Start()
@@ -19,11 +21,13 @@ public class EnemiesManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (saber.IsActivated && transform.childCount == 0)
+        elapsedTime += Time.deltaTime;
+        if (saber.IsActivated && elapsedTime >= interval)
         {
+            elapsedTime = 0f;
             foreach (var enemy in GetComponentsInChildren<Enemy>())
             {
-                enemy.enabled = true;
+                if(!enemy.enabled) enemy.enabled = true;
             }
             DropEnemy();
         }
@@ -31,19 +35,15 @@ public class EnemiesManager : MonoBehaviour
 
     private void DropEnemy()
     {
-        GameObject gamePlane = GameObject.Find("GamePlane");
-        Vector3 dimensions = gamePlane.transform.lossyScale;
-        Vector3 position = gamePlane.transform.position;
+        MeshCollider collider = GameObject.Find("GamePlane").GetComponent<MeshCollider>();
 
-        float minX = position.x - dimensions.x / 2;
-        float maxX = position.x + dimensions.x / 2;
-        float minZ = position.z - dimensions.z / 2;
-        float maxZ = position.z + dimensions.z / 2;
+        Vector3 position = collider.bounds.center + new Vector3(
+        Random.Range(-collider.bounds.size.x / 2, collider.bounds.size.x / 2),
+        10,
+        Random.Range(-collider.bounds.size.z / 2, collider.bounds.size.z / 2)
+);
 
-        float x = Random.Range(minX, maxX);
-        float z = Random.Range(minZ, maxZ);
-
-        GameObject enemy = Instantiate(PrefabEnemy, new Vector3(x, 1, z), Quaternion.identity);
+        GameObject enemy = Instantiate(PrefabEnemy, position, Quaternion.identity);
         enemy.transform.parent = this.transform;
         Enemy e = enemy.GetComponent<Enemy>();
         e.enabled = true;

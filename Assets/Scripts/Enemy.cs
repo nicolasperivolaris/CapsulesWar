@@ -14,15 +14,26 @@ public class Enemy : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        NavMeshAgent agent = GetComponent<NavMeshAgent>();
-        agent.destination = Player.transform.position;
         if (chromosome == null)
             chromosome = GetComponent<Chromosome>();
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
-        GetComponent<NavMeshAgent>().SetDestination(Player.transform.position);
+        if (GetComponent<NavMeshAgent>().enabled != true && GetComponent<Rigidbody>().velocity.magnitude < 0.1)
+        {
+            try
+            {
+                GetComponent<NavMeshAgent>().enabled = true;
+                if (!GetComponent<NavMeshAgent>().isActiveAndEnabled) Destroy(gameObject);
+            }
+            catch
+            {
+                Debug.Log("coucou");
+            }
+        }
+            NavMeshAgent agent = GetComponent<NavMeshAgent>();
+            if (agent.isOnNavMesh) agent.SetDestination(Player.transform.position);
     }
 
     public float Fitness()
