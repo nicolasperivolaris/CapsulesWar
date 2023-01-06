@@ -17,9 +17,17 @@ public class Blade : MonoBehaviour
         
     }
 
-    private void OnCollisionEnter(Collision collision)
+    /*private void OnCollisionEnter(Collision collision)
     {
         Enemy e = collision.gameObject.GetComponent<Enemy>();
+        if (e != null)
+            Destroy(e.gameObject);
+
+    }*/
+
+    private void OnTriggerEnter(Collider collider)
+    {
+        Enemy e = collider.gameObject.GetComponent<Enemy>();
         if (e != null)
             Destroy(e.gameObject);
 

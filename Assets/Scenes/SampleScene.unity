@@ -721,6 +721,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 607641687}
     m_Modifications:
+    - target: {fileID: 472882156767470058, guid: eafa3845fef445948991b60a275913eb,
+        type: 3}
+      propertyPath: m_Radius
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 472882156767470058, guid: eafa3845fef445948991b60a275913eb,
+        type: 3}
+      propertyPath: m_StoppingDistance
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 848311478106328393, guid: eafa3845fef445948991b60a275913eb,
         type: 3}
       propertyPath: Player
@@ -804,7 +814,7 @@ PrefabInstance:
     - target: {fileID: 4085015327640368735, guid: eafa3845fef445948991b60a275913eb,
         type: 3}
       propertyPath: m_IsTrigger
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 7239741266238965927, guid: eafa3845fef445948991b60a275913eb, type: 3}
