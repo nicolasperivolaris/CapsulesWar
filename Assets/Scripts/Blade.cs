@@ -29,7 +29,7 @@ public class Blade : MonoBehaviour
     {
         Enemy e = collider.gameObject.GetComponent<Enemy>();
         if (e != null)
-            Destroy(e.gameObject);
+            e.Killed();
 
     }
 }

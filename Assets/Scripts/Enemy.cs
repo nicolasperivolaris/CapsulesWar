@@ -1,13 +1,16 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using Valve.VR.InteractionSystem;
 
 public class Enemy : MonoBehaviour
 {
     public GameObject Player;
-    public int MoveSpeed = 10;
     public Chromosome chromosome;
+    int playerTouched = 0;
+    long lifeTime = 0;
     // Start is called before the first frame update
     void Start()
     {
@@ -19,11 +22,17 @@ public class Enemy : MonoBehaviour
 
     private void FixedUpdate()
     {
-        GetComponent<NavMeshAgent>().destination = Player.transform.position;
+        GetComponent<NavMeshAgent>().SetDestination(Player.transform.position);
     }
 
-    public int Fitness()
+    public float Fitness()
     {
-        return 0;
+        return playerTouched/lifeTime;
+    }
+
+    public void Killed()
+    {
+        GetComponentInParent<EnemiesManager>().OnEnemyKilled(this);
+        Destroy(this.gameObject);
     }
 }
