@@ -21,7 +21,7 @@ public class Enemy : MonoBehaviour
         this.chromosome = chromosome;
         foreach (var gene in chromosome)
         {
-            gene.Value.Express(this);
+            gene.Value.Start(this);
         }
     }
 
@@ -36,6 +36,11 @@ public class Enemy : MonoBehaviour
         }
         NavMeshAgent agent = GetComponent<NavMeshAgent>();
         if (agent.isOnNavMesh) agent.SetDestination(Player.transform.position);
+
+        foreach (Gene gene in chromosome.Values)
+        {
+            gene.Update(this);
+        }
     }
 
     public float Fitness()

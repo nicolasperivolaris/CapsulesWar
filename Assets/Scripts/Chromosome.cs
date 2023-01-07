@@ -8,11 +8,6 @@ public class Chromosome : Dictionary<string, Gene>
     delegate void Action();
     public int totalWeight { get; private set; }
 
-    public Chromosome() : base()
-    { 
-        
-    }
-
     public static Chromosome Crossover(Chromosome c1, Chromosome c2)
     {
         Chromosome newChro = new Chromosome();
@@ -76,13 +71,14 @@ public class Gene
     public const string SHOOT = "Shoot";
     public const string JUMP = "Jump";
     public const string MULTIPLY = "Multiply";
-    public const string AUTIDESTROY = "Autodestroy";
+    public const string AUTODESTROY = "Autodestroy";
 
     public string name { get; }
     public int value { get; set; }
     public int minValue { get; }
     public delegate void Expression(Enemy e, Gene g);
-    public Expression expression { get; set; }
+    public Expression FirstEffect { get; set; }
+    public Expression ContinuousEffect { get; set; }
 
     public Gene(string name, int value, int minValue)
     {
@@ -93,9 +89,14 @@ public class Gene
 
     public Gene(string name, int value) : this(name, value, 0) { }
 
-    public void Express(Enemy e)
+    public void Start(Enemy e)
     {
-        expression(e, this);
+        FirstEffect(e, this);
+    }
+
+    public void Update(Enemy e)
+    {
+        ContinuousEffect(e, this);
     }
 
 
