@@ -22,13 +22,12 @@ public class EnemiesManager : MonoBehaviour
         seed = new Chromosome();
         Gene speedGene = new Gene(Gene.SPEED, 1, 1);
         speedGene.expression = (enemy, gene) => {
-            enemy.GetComponent<NavMeshAgent>().speed *= gene.value;
+            enemy.GetComponent<NavMeshAgent>().speed += gene.value/(float)(seed.totalWeight + 1);
         };
         seed.Add(speedGene);
-        speedGene = new Gene(Gene.FLY, 0, 0);
+        speedGene = new Gene(Gene.JUMP, 0, 0);
         speedGene.expression = (enemy, gene) => {
-            if(gene.value > 0) 
-                enemy.GetComponent<MeshRenderer>().material.color = Color.blue;
+            
         };
         seed.Add(speedGene);
     }

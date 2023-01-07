@@ -27,10 +27,12 @@ public class Enemy : MonoBehaviour
 
     private void Update()
     {
-        if (GetComponent<NavMeshAgent>().enabled != true && GetComponent<Rigidbody>().velocity.magnitude < 0.1)
+        if (GetComponent<NavMeshAgent>().enabled != true && GetComponent<Rigidbody>().velocity.magnitude < 0.01)
         {
             GetComponent<NavMeshAgent>().enabled = true;
-            if (!GetComponent<NavMeshAgent>().isActiveAndEnabled) Destroy(gameObject);
+
+            if (!GetComponent<NavMeshAgent>().isOnNavMesh) 
+                Destroy(gameObject);
         }
         NavMeshAgent agent = GetComponent<NavMeshAgent>();
         if (agent.isOnNavMesh) agent.SetDestination(Player.transform.position);

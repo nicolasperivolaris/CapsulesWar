@@ -6,7 +6,7 @@ using UnityEngine;
 public class Chromosome : Dictionary<string, Gene>
 {
     delegate void Action();
-    internal int totalWeight;
+    public int totalWeight { get; private set; }
 
     public Chromosome() : base()
     { 
