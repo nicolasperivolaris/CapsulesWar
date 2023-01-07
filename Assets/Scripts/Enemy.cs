@@ -8,32 +8,32 @@ using Valve.VR.InteractionSystem;
 public class Enemy : MonoBehaviour
 {
     public GameObject Player;
-    public Chromosome chromosome;
+    private Chromosome chromosome;
     int playerTouched = 0;
     long lifeTime = 0;
     // Start is called before the first frame update
     void Start()
     {
-        if (chromosome == null)
-            chromosome = GetComponent<Chromosome>();
+    }
+
+    public void SetChromosome(Chromosome chromosome)
+    {
+        this.chromosome = chromosome;
+        foreach (var gene in chromosome)
+        {
+            gene.Value.Express(this);
+        }
     }
 
     private void Update()
     {
         if (GetComponent<NavMeshAgent>().enabled != true && GetComponent<Rigidbody>().velocity.magnitude < 0.1)
         {
-            try
-            {
-                GetComponent<NavMeshAgent>().enabled = true;
-                if (!GetComponent<NavMeshAgent>().isActiveAndEnabled) Destroy(gameObject);
-            }
-            catch
-            {
-                Debug.Log("coucou");
-            }
+            GetComponent<NavMeshAgent>().enabled = true;
+            if (!GetComponent<NavMeshAgent>().isActiveAndEnabled) Destroy(gameObject);
         }
-            NavMeshAgent agent = GetComponent<NavMeshAgent>();
-            if (agent.isOnNavMesh) agent.SetDestination(Player.transform.position);
+        NavMeshAgent agent = GetComponent<NavMeshAgent>();
+        if (agent.isOnNavMesh) agent.SetDestination(Player.transform.position);
     }
 
     public float Fitness()
@@ -44,6 +44,6 @@ public class Enemy : MonoBehaviour
     public void Killed()
     {
         GetComponentInParent<EnemiesManager>().OnEnemyKilled(this);
-        Destroy(this.gameObject);
+        Destroy(gameObject);
     }
 }

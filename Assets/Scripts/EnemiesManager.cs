@@ -1,21 +1,36 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
+using UnityEditor.VersionControl;
 using UnityEngine;
+using UnityEngine.AI;
 using Valve.VR.InteractionSystem;
 using Random = UnityEngine.Random;
 
 public class EnemiesManager : MonoBehaviour
 {
+    private Chromosome seed;
     public GameObject PrefabEnemy;
     public GameObject Player;
     private float elapsedTime = 0f;
-    public float interval = 2f;
+    private float interval = 2f;
     // Start is called before the first frame update
     public Saber saber;
     void Start()
     {
-        
+        seed = new Chromosome();
+        Gene speedGene = new Gene(Gene.SPEED, 1, 1);
+        speedGene.expression = (enemy, gene) => {
+            enemy.GetComponent<NavMeshAgent>().speed *= gene.value;
+        };
+        seed.Add(speedGene);
+        speedGene = new Gene(Gene.FLY, 0, 0);
+        speedGene.expression = (enemy, gene) => {
+            if(gene.value > 0) 
+                enemy.GetComponent<MeshRenderer>().material.color = Color.blue;
+        };
+        seed.Add(speedGene);
     }
 
     // Update is called once per frame
@@ -25,34 +40,35 @@ public class EnemiesManager : MonoBehaviour
         if (saber.IsActivated && elapsedTime >= interval)
         {
             elapsedTime = 0f;
-            foreach (var enemy in GetComponentsInChildren<Enemy>())
+            foreach (var e in GetComponentsInChildren<Enemy>())
             {
-                if(!enemy.enabled) enemy.enabled = true;
+                if(!e.enabled) e.enabled = true;
             }
-            DropEnemy();
+
+            GameObject enemy = Instantiate(PrefabEnemy, Vector3.zero, Quaternion.identity);
+            enemy.transform.parent = this.transform;
+            Enemy eComp = enemy.AddComponent<Enemy>();
+            eComp.Player = Player;
+            seed = Chromosome.Crossover(seed, seed);
+            eComp.SetChromosome(seed);
+            DropEnemy(enemy);
         }
     }
 
-    private void DropEnemy()
+    private void DropEnemy(GameObject enemy)
     {
         MeshCollider collider = GameObject.Find("GamePlane").GetComponent<MeshCollider>();
 
         Vector3 position = collider.bounds.center + new Vector3(
         Random.Range(-collider.bounds.size.x / 2, collider.bounds.size.x / 2),
         10,
-        Random.Range(-collider.bounds.size.z / 2, collider.bounds.size.z / 2)
-);
+        Random.Range(-collider.bounds.size.z / 2, collider.bounds.size.z / 2));  
 
-        GameObject enemy = Instantiate(PrefabEnemy, position, Quaternion.identity);
-        enemy.transform.parent = this.transform;
-        Enemy e = enemy.GetComponent<Enemy>();
-        e.enabled = true;
-        e.Player = Player;
+        enemy.transform.position = position;
         
     }
 
     public void OnEnemyKilled(Enemy e)
     {
-        DropEnemy();
     }
 }

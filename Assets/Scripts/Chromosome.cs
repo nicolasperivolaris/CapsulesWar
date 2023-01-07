@@ -1,39 +1,19 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Xml.Schema;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class Chromosome : Dictionary<string, Gene>
 {
     delegate void Action();
-
-    private const string SPEED = "Speed";
-    private const string FLY = "Fly";
-    private const string SHOOT = "Shoot";
-    private const string JUMP = "Jump";
-    private const string MULTIPLY = "Multiply";
-    private const string AUTIDESTROY = "Autodestroy";
     internal int totalWeight;
 
     public Chromosome() : base()
     { 
+        
     }
 
-
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-    }
-
-    static Chromosome Mix(Chromosome c1, Chromosome c2)
+    public static Chromosome Crossover(Chromosome c1, Chromosome c2)
     {
         Chromosome newChro = new Chromosome();
         foreach (var c in c1)
@@ -54,10 +34,29 @@ public class Chromosome : Dictionary<string, Gene>
                 newChro.Add(c.Key, c.Value);
         }
 
+        newChro.Mutate() ;
+
         return newChro;
     }
 
-    
+    private void Mutate()
+    {
+        foreach (var g in this)
+        {
+            if (Random.Range(0, 2) == 0)
+            {
+                g.Value.value++;
+            }
+            if (Random.Range(0, 2) == 0)
+            {
+                if (g.Value.value > g.Value.minValue) g.Value.value--;
+            }
+            if (Random.Range(0, 10) == 0)
+            {
+                g.Value.value = g.Value.minValue;
+            }
+        }
+    }
 
     public void Add(Gene gene)
     {
@@ -72,25 +71,31 @@ public class Chromosome : Dictionary<string, Gene>
 }
 public class Gene
 {
-    public string name { get; }
-    public int value { get; }
-    public int minValue { get; }
-    internal delegate void Expression(Gene gene);
-    Expression expression;
+    public const string SPEED = "Speed";
+    public const string FLY = "Fly";
+    public const string SHOOT = "Shoot";
+    public const string JUMP = "Jump";
+    public const string MULTIPLY = "Multiply";
+    public const string AUTIDESTROY = "Autodestroy";
 
-    internal Gene(string name, int value, int minValue, Expression e)
+    public string name { get; }
+    public int value { get; set; }
+    public int minValue { get; }
+    public delegate void Expression(Enemy e, Gene g);
+    public Expression expression { get; set; }
+
+    public Gene(string name, int value, int minValue)
     {
         this.name = name;
         this.value = value;
         this.minValue = minValue;
-        this.expression = e;
     }
 
-    internal Gene(string name, int value, Expression e) : this(name, value, 0, e) { }
+    public Gene(string name, int value) : this(name, value, 0) { }
 
-    internal void Express()
+    public void Express(Enemy e)
     {
-        expression(this);
+        expression(e, this);
     }
 
 
