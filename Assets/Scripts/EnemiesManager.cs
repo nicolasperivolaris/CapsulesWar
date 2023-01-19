@@ -27,12 +27,12 @@ public class EnemiesManager : MonoBehaviour
         seed.Add(speedGene);
         speedGene = new Gene(Gene.JUMP, 1, 0);
         speedGene.ContinuousEffect = (enemy, gene) => {
-            Rigidbody rb = gameObject.GetComponent<Rigidbody>();
-            if(rb.velocity.y > 0.1 && Random.Range(0, 200) < 1)
+            NavMeshAgent agent = enemy.GetComponent<NavMeshAgent>();
+            //enemy.GetComponent<MeshRenderer>().material.color = Color.green;
+            if (Random.Range(0, 100) < 1)
             {
-                Vector3 velocity = rb.velocity;
-                velocity.y = gene.value/(float)(seed.totalWeight + 1);
-                enemy.GetComponent<Rigidbody>().velocity = velocity;
+                enemy.Jump();
+                //agent.velocity.y = gene.value/(float)(seed.totalWeight + 1);
             }
         };
         seed.Add(speedGene);

@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class Chromosome : Dictionary<string, Gene>
 {
-    delegate void Action();
     public int totalWeight { get; private set; }
 
     public static Chromosome Crossover(Chromosome c1, Chromosome c2)
@@ -91,12 +90,14 @@ public class Gene
 
     public void Start(Enemy e)
     {
-        FirstEffect(e, this);
+        if (FirstEffect != null)
+            FirstEffect(e, this);
     }
 
     public void Update(Enemy e)
     {
-        ContinuousEffect(e, this);
+        if(ContinuousEffect != null)
+            ContinuousEffect(e, this);
     }
 
 

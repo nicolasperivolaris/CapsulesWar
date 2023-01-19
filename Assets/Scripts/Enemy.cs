@@ -25,22 +25,37 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    public void Jump()
+    {
+        GetComponent<NavMeshAgent>().Move(GetComponent<NavMeshAgent>().transform.forward * 2);
+
+        /*
+        Vector3 dir = GetComponent<NavMeshAgent>().transform.forward;
+        GetComponent<NavMeshAgent>().enabled = false;
+        Rigidbody rb = GetComponent<Rigidbody>();
+        rb.isKinematic = false;
+        rb.velocity = dir;*/
+    }
+
     private void Update()
     {
-        if (GetComponent<NavMeshAgent>().enabled != true && GetComponent<Rigidbody>().velocity.magnitude < 0.01)
+        NavMeshAgent agent = GetComponent<NavMeshAgent>();
+        if (agent.enabled != true && GetComponent<Rigidbody>().velocity.magnitude < 0.01)
         {
             GetComponent<NavMeshAgent>().enabled = true;
-
-            if (!GetComponent<NavMeshAgent>().isOnNavMesh) 
-                Destroy(gameObject);
+            GetComponent<Rigidbody>().isKinematic = true;
         }
-        NavMeshAgent agent = GetComponent<NavMeshAgent>();
-        if (agent.isOnNavMesh) agent.SetDestination(Player.transform.position);
+        else
+        {
+            if(agent.isOnNavMesh) 
+                agent.SetDestination(Player.transform.position);
+        }
 
         foreach (Gene gene in chromosome.Values)
         {
-            gene.Update(this);
+            gene.Update(this); 
         }
+
     }
 
     public float Fitness()
