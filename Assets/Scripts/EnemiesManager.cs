@@ -1,29 +1,29 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
-using UnityEditor.VersionControl;
+using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.AI;
-using Valve.VR.InteractionSystem;
 using Random = UnityEngine.Random;
 
 public class EnemiesManager : MonoBehaviour
 {
-    private Chromosome seed;
     public GameObject PrefabEnemy;
     public GameObject Player;
     private float elapsedTime = 0f;
     private float interval = 2f;
     // Start is called before the first frame update
     public Saber saber;
+    private SortedList<float, Enemy> deadEnemies = new SortedList<float, Enemy>();
+    private const int DEAD_QUEUE_SIZE = 10;
+    private int enemyCount = 0;
     void Start()
     {
+        deadEnemies.Capacity = DEAD_QUEUE_SIZE;
+        Chromosome c = gameObject.AddComponent<Chromosome>();
+        c.enabled = false;
+        c.Add<Enemy.SpeedGene>(1).enabled = false;
+
+        /*
         seed = new Chromosome();
-        Gene speedGene = new Gene(Gene.SPEED, 1, 1);
-        speedGene.FirstEffect = (enemy, gene) => {
-            enemy.GetComponent<NavMeshAgent>().speed += gene.value/(float)(seed.totalWeight + 1);
-        };
+        AbstractGene speedGene = new Enemy.SpeedGene();
         seed.Add(speedGene);
         speedGene = new Gene(Gene.JUMP, 1, 0);
         speedGene.ContinuousEffect = (enemy, gene) => {
@@ -35,7 +35,7 @@ public class EnemiesManager : MonoBehaviour
                 //agent.velocity.y = gene.value/(float)(seed.totalWeight + 1);
             }
         };
-        seed.Add(speedGene);
+        seed.Add(speedGene);*/
     }
 
     // Update is called once per frame
@@ -51,11 +51,11 @@ public class EnemiesManager : MonoBehaviour
             }
 
             GameObject enemy = Instantiate(PrefabEnemy, Vector3.zero, Quaternion.identity);
-            enemy.transform.parent = this.transform;
+            enemy.transform.parent = transform;
             Enemy eComp = enemy.AddComponent<Enemy>();
             eComp.Player = Player;
-            seed = Chromosome.Crossover(seed, seed);
-            eComp.SetChromosome(seed);
+            Chromosome c = eComp.AddComponent<Chromosome>();
+            c.Copy(GetComponent<Chromosome>());
             DropEnemy(enemy);
         }
     }
@@ -70,10 +70,19 @@ public class EnemiesManager : MonoBehaviour
         Random.Range(-collider.bounds.size.z / 2, collider.bounds.size.z / 2));  
 
         enemy.transform.position = position;
-        
+        enemyCount++;
     }
 
     public void OnEnemyKilled(Enemy e)
     {
+        if(!deadEnemies.ContainsKey(e.Fitness()))
+            deadEnemies.Add(e.Fitness(), e);
+        deadEnemies.TrimExcess();
+        long tempLT = 0;
+        foreach (var dead in deadEnemies)
+        {
+            tempLT += dead.Value.getLifeTime();
+        }
+        Enemy.AvgLT = tempLT/deadEnemies.Count;
     }
 }

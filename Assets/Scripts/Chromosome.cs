@@ -1,104 +1,100 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Chromosome : Dictionary<string, Gene>
+public class Chromosome:MonoBehaviour
 {
     public int totalWeight { get; private set; }
-
-    public static Chromosome Crossover(Chromosome c1, Chromosome c2)
+    private Dictionary<string, Gene> genes = new Dictionary<string, Gene>();
+    public void Crossover(Chromosome c1, Chromosome c2)
     {
-        Chromosome newChro = new Chromosome();
-        foreach (var c in c1)
+        for(int i=0; i<genes.Count; i++)
         {
-            if (c1.ContainsKey(c.Key)) {
-                Gene g = Random.Range(0, 2) == 0 ? c.Value : c2[c.Key];
-                newChro.Add(g.name, g);
-            }
+            Gene toAdd = null;
+            if (i < genes.Count / 2)
+                toAdd = c1.genes.ElementAt(i).Value;
             else
-            {
-                if (Random.Range(0, 2) == 0) newChro.Add(c.Key, c.Value);
-            }
+                toAdd = c2.genes.ElementAt(i).Value;
+            Add(toAdd);
         }
+        if(Random.Range(0,10) == 0)
+            Mutate() ;
+    }
 
-        foreach (var c in c2)
-        {
-            if(!newChro.ContainsKey(c.Key) && Random.Range(0, 2) == 0) 
-                newChro.Add(c.Key, c.Value);
-        }
-
-        newChro.Mutate() ;
-
-        return newChro;
+    private void Add(Gene g)
+    {
+        System.Type[] typeArgs = { g.GetType() };
+        MethodInfo addMethod = GetType().GetMethod("Add").MakeGenericMethod(typeArgs);
+        addMethod.Invoke(this, new object[] { g.value });
     }
 
     private void Mutate()
     {
-        foreach (var g in this)
+        int type = Random.Range(0, 3);
+        switch (type)
         {
-            if (Random.Range(0, 2) == 0)
-            {
-                g.Value.value++;
-            }
-            if (Random.Range(0, 2) == 0)
-            {
-                if (g.Value.value > g.Value.minValue) g.Value.value--;
-            }
-            if (Random.Range(0, 10) == 0)
-            {
-                g.Value.value = g.Value.minValue;
-            }
+            case 0:
+                genes.ElementAt(Random.Range(0, genes.Count)).Value.value++;
+                break;
+            case 1:
+                Gene toChange = genes.ElementAt(Random.Range(0, genes.Count)).Value;
+                if(toChange.value != toChange.minValue)
+                    toChange.value--;
+                break;
+            case 2:
+                Gene a = genes.ElementAt(Random.Range(0, genes.Count)).Value;
+                Gene b = genes.ElementAt(Random.Range(0, genes.Count)).Value;
+                int temp = b.value;
+                b.value = a.value>b.minValue ? a.value : b.minValue;
+                a.value = temp>a.minValue ? temp : a.minValue;
+                break;
         }
     }
 
-    public void Add(Gene gene)
+    public void Copy(Chromosome c)
     {
-        if (ContainsKey(gene.name))
+        foreach(Gene gene in c.genes.Values)
         {
-            totalWeight -= this[gene.name].value;
-            Remove(gene.name);
+            Add(gene);
         }
-        Add(gene.name, gene);
-        totalWeight += gene.value;
     }
-}
-public class Gene
-{
-    public const string SPEED = "Speed";
-    public const string FLY = "Fly";
-    public const string SHOOT = "Shoot";
-    public const string JUMP = "Jump";
-    public const string MULTIPLY = "Multiply";
-    public const string AUTODESTROY = "Autodestroy";
 
-    public string name { get; }
-    public int value { get; set; }
-    public int minValue { get; }
-    public delegate void Expression(Enemy e, Gene g);
-    public Expression FirstEffect { get; set; }
-    public Expression ContinuousEffect { get; set; }
-
-    public Gene(string name, int value, int minValue)
+    public bool Remove(Gene gene)
     {
-        this.name = name;
-        this.value = value;
-        this.minValue = minValue;
+        if (genes.ContainsKey(gene.type))
+        {
+            totalWeight -= gene.value;
+            genes.Remove(gene.type);
+            Destroy(gene);
+            return true;
+        }
+        return false;
     }
 
-    public Gene(string name, int value) : this(name, value, 0) { }
+    public T Add<T>(int value) where T : Gene
+    { 
+        T newGene = gameObject.AddComponent<T>();
+        newGene.value = value;
+        genes.Add(newGene.type, newGene);
+        totalWeight += value;
+        return newGene;
+    }
 
-    public void Start(Enemy e)
+    public Dictionary<string, Gene> GetGenes()
     {
-        if (FirstEffect != null)
-            FirstEffect(e, this);
+        return genes;
     }
 
-    public void Update(Enemy e)
+    internal int getGenesFitBonus()
     {
-        if(ContinuousEffect != null)
-            ContinuousEffect(e, this);
+        int result = 0;
+        foreach(var gene in genes.Values)
+        {
+            result += gene.getFitBonus();
+        }
+
+        return result;
     }
-
-
 }
