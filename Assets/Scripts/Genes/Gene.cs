@@ -8,7 +8,7 @@ public abstract class Gene : MonoBehaviour
 {
     public const string SPEED = "Speed";
     public const string FLY = "Fly";
-    public const string SHOOT = "Shoot";
+    public const string LASER = "Laser";
     public const string JUMP = "Jump";
     public const string MULTIPLY = "Multiply";
     public const string AUTODESTROY = "Autodestroy";

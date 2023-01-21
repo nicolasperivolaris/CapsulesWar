@@ -26,7 +26,7 @@ public class Chromosome:MonoBehaviour
     private void Add(Gene g)
     {
         System.Type[] typeArgs = { g.GetType() };
-        MethodInfo addMethod = GetType().GetMethod("Add").MakeGenericMethod(typeArgs);
+        MethodInfo addMethod = GetType().GetMethod("Add", new System.Type[] { typeof(int) }).MakeGenericMethod(typeArgs);
         addMethod.Invoke(this, new object[] { g.value });
     }
 
@@ -79,6 +79,14 @@ public class Chromosome:MonoBehaviour
         newGene.value = value;
         genes.Add(newGene.type, newGene);
         totalWeight += value;
+        return newGene;
+    }
+
+    public T Add<T>() where T : Gene
+    {
+        T newGene = gameObject.AddComponent<T>();
+        genes.Add(newGene.type, newGene);
+        totalWeight += newGene.value;
         return newGene;
     }
 

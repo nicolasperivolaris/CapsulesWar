@@ -8,7 +8,7 @@ using UnityEngine.InputSystem.Controls;
 using Valve.VR.InteractionSystem;
 using static UnityEngine.EventSystems.EventTrigger;
 
-public class Enemy : MonoBehaviour
+public partial class Enemy : MonoBehaviour
 {
     public GameObject Player;
     const int PLAYER_KILLED_BONUS = 50;
@@ -18,6 +18,7 @@ public class Enemy : MonoBehaviour
     public static long AvgLT = long.MaxValue;
     long birthTime = 0;
     long deathTime = 0;
+    internal GameObject laser;
 
     // Start is called before the first frame update
     void Start()
@@ -25,32 +26,22 @@ public class Enemy : MonoBehaviour
         birthTime = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
     }
 
-    public void Jump()
-    {
-        if (GetComponent<NavMeshAgent>().isActiveAndEnabled)
-        {
-            GetComponent<NavMeshObstacle>().enabled = true;
-            GetComponent<NavMeshAgent>().enabled = false;
-            GetComponent<Rigidbody>().isKinematic = false;
-            Vector3 rbV = GetComponent<Rigidbody>().velocity;
-            Vector3 nmaV = GetComponent<NavMeshAgent>().velocity;
-            GetComponent<Rigidbody>().velocity = new Vector3(nmaV.x, nmaV.y + 5, nmaV.z) + GetComponent<NavMeshAgent>().transform.forward;
-        }
-    }
-
     private void Update()
     {
-        NavMeshAgent agent = GetComponent<NavMeshAgent>();
-        if (agent.enabled != true && GetComponent<Rigidbody>().velocity.magnitude < 0.01)
+        NavMeshAgent agent = GetComponent<NavMeshAgent>();/// TODO transfert dans gène 
+        if (agent.enabled != true && agent.isOnNavMesh && GetComponent<Rigidbody>().velocity.magnitude < 0.01)
         {
-            GetComponent<NavMeshAgent>().enabled = true;
             GetComponent<NavMeshObstacle>().enabled = false;
+            agent.enabled = true;
             GetComponent<Rigidbody>().isKinematic = true;
         }
         else
         {
-            if(agent.isOnNavMesh) 
+            if (agent.isOnNavMesh)
+            {
                 agent.SetDestination(Player.transform.position);
+                transform.LookAt(Player.transform);
+            }
         }
         distanceToPlayer = Vector3.Distance(Player.transform.position, transform.position);
     }
@@ -74,23 +65,5 @@ public class Enemy : MonoBehaviour
     {
         if(deathTime > 0) return deathTime-birthTime;
         else return DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond - birthTime;
-    } 
-
-    public class SpeedGene:Gene
-    {
-
-        public SpeedGene() : base(SPEED, 1, 1)
-        {}
-
-        public override int getFitBonus()
-        {
-            if (GetComponentInParent<Enemy>().distanceToPlayer < 3) return 50;
-            else return 0;
-        }
-
-        public void Update()
-        {
-            GetComponentInParent<NavMeshAgent>().speed = value / (float)(GetComponentInParent<Chromosome>().totalWeight);
-        }
     }
 }

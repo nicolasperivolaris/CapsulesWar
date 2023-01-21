@@ -17,4 +17,14 @@ public class PlayerBody : MonoBehaviour
     {
         transform.position = ToFollow.hmdTransform.position;
     }
+    
+    public void Touched(ShotBehavior shot)
+    {
+        Debug.Log("Touched");
+    }
+
+    public void Touched(GameObject o)
+    {
+        Debug.Log("Touched");
+    }
 }

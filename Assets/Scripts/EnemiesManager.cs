@@ -7,6 +7,7 @@ public class EnemiesManager : MonoBehaviour
 {
     public GameObject PrefabEnemy;
     public GameObject Player;
+    public GameObject Laser;
     private float elapsedTime = 0f;
     private float interval = 2f;
     // Start is called before the first frame update
@@ -19,7 +20,9 @@ public class EnemiesManager : MonoBehaviour
         deadEnemies.Capacity = DEAD_QUEUE_SIZE;
         Chromosome c = gameObject.AddComponent<Chromosome>();
         c.enabled = false;
-        c.Add<Enemy.SpeedGene>(1).enabled = false;
+        c.Add<Enemy.SpeedGene>().enabled = false;
+        //c.Add<Enemy.JumpGene>().enabled = false;
+        c.Add<Enemy.LaserGene>().enabled=false;
 
         /*
         seed = new Chromosome();
@@ -45,22 +48,19 @@ public class EnemiesManager : MonoBehaviour
         if (saber.IsActivated && elapsedTime >= interval)
         {
             elapsedTime = 0f;
-            foreach (var e in GetComponentsInChildren<Enemy>())
-            {
-                if(!e.enabled) e.enabled = true;
-            }
 
-            GameObject enemy = Instantiate(PrefabEnemy, Vector3.zero, Quaternion.identity);
-            enemy.transform.parent = transform;
-            Enemy eComp = enemy.AddComponent<Enemy>();
-            eComp.Player = Player;
-            Chromosome c = eComp.AddComponent<Chromosome>();
+            GameObject go = Instantiate(PrefabEnemy, Vector3.zero, Quaternion.identity);
+            go.transform.parent = transform;
+            Enemy enemy = go.AddComponent<Enemy>();
+            enemy.Player = Player;
+            enemy.laser = Laser;
+            Chromosome c = enemy.AddComponent<Chromosome>();
             c.Copy(GetComponent<Chromosome>());
             DropEnemy(enemy);
         }
     }
 
-    private void DropEnemy(GameObject enemy)
+    private void DropEnemy(Enemy enemy)
     {
         MeshCollider collider = GameObject.Find("GamePlane").GetComponent<MeshCollider>();
 
