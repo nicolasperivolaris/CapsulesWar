@@ -29,11 +29,11 @@ public partial class Enemy : MonoBehaviour
     private void Update()
     {
         NavMeshAgent agent = GetComponent<NavMeshAgent>();/// TODO transfert dans gène 
-        if (agent.enabled != true && agent.isOnNavMesh && GetComponent<Rigidbody>().velocity.magnitude < 0.01)
+        if (agent.enabled != true && GetComponent<Rigidbody>().velocity.magnitude < 0.01)
         {
             GetComponent<NavMeshObstacle>().enabled = false;
-            agent.enabled = true;
             GetComponent<Rigidbody>().isKinematic = true;
+            agent.enabled = true;
         }
         else
         {

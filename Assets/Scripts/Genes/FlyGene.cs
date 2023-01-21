@@ -21,11 +21,13 @@ public partial class Enemy
                 GetComponent<NavMeshObstacle>().enabled = true;
             }
             if (flying)
-            {
+            {            
                 if (flyingTime >= value)
+                {
                     flying = false;
-                transform.position += GetComponent<NavMeshAgent>().speed * transform.forward * Time.deltaTime;
-                transform.position += Vector3.up;
+                } 
+
+                GetComponent<Rigidbody>().velocity = GetComponent<NavMeshAgent>().speed * transform.forward + Vector3.up ;
                 flyingTime += Time.deltaTime;
             }
         }

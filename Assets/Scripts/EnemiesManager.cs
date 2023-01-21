@@ -12,36 +12,18 @@ public class EnemiesManager : MonoBehaviour
     private float interval = 2f;
     // Start is called before the first frame update
     public Saber saber;
-    private SortedList<float, Enemy> deadEnemies = new SortedList<float, Enemy>();
+    private HashSet<Enemy> deadEnemies = new HashSet<Enemy>();
     private const int DEAD_QUEUE_SIZE = 10;
-    private int enemyCount = 0;
     void Start()
     {
-        deadEnemies.Capacity = DEAD_QUEUE_SIZE;
         Chromosome c = gameObject.AddComponent<Chromosome>();
         c.enabled = false;
         c.Add<Enemy.SpeedGene>().enabled = false;
-        //c.Add<Enemy.JumpGene>().enabled = false;
+        c.Add<Enemy.JumpGene>().enabled = false;
         c.Add<Enemy.LaserGene>().enabled=false;
-
-        /*
-        seed = new Chromosome();
-        AbstractGene speedGene = new Enemy.SpeedGene();
-        seed.Add(speedGene);
-        speedGene = new Gene(Gene.JUMP, 1, 0);
-        speedGene.ContinuousEffect = (enemy, gene) => {
-            NavMeshAgent agent = enemy.GetComponent<NavMeshAgent>();
-            //enemy.GetComponent<MeshRenderer>().material.color = Color.green;
-            if (Random.Range(0, 100) < 1)
-            {
-                enemy.Jump();
-                //agent.velocity.y = gene.value/(float)(seed.totalWeight + 1);
-            }
-        };
-        seed.Add(speedGene);*/
+        c.Add<Enemy.FlyGene>().enabled = false;
     }
 
-    // Update is called once per frame
     void Update()
     {
         elapsedTime += Time.deltaTime;
@@ -62,7 +44,17 @@ public class EnemiesManager : MonoBehaviour
 
     private void DropEnemy(Enemy enemy)
     {
-        MeshCollider collider = GameObject.Find("GamePlane").GetComponent<MeshCollider>();
+        GameObject[] planes = GameObject.FindGameObjectsWithTag("GamePlane");
+        GameObject closest = planes[0];
+        foreach (var plane in planes)
+        {
+            if(Vector3.Distance(plane.transform.position, Player.transform.position) < Vector3.Distance(closest.transform.position, Player.transform.position))
+            {
+                closest = plane;
+            }
+        }
+            
+        MeshCollider collider = closest.GetComponent<MeshCollider>();
 
         Vector3 position = collider.bounds.center + new Vector3(
         Random.Range(-collider.bounds.size.x / 2, collider.bounds.size.x / 2),
@@ -70,18 +62,15 @@ public class EnemiesManager : MonoBehaviour
         Random.Range(-collider.bounds.size.z / 2, collider.bounds.size.z / 2));  
 
         enemy.transform.position = position;
-        enemyCount++;
     }
 
     public void OnEnemyKilled(Enemy e)
     {
-        if(!deadEnemies.ContainsKey(e.Fitness()))
-            deadEnemies.Add(e.Fitness(), e);
-        deadEnemies.TrimExcess();
+        deadEnemies.Add(e);
         long tempLT = 0;
         foreach (var dead in deadEnemies)
         {
-            tempLT += dead.Value.getLifeTime();
+            tempLT += dead.getLifeTime();
         }
         Enemy.AvgLT = tempLT/deadEnemies.Count;
     }

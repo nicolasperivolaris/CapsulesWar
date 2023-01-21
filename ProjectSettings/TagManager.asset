@@ -9,6 +9,7 @@ TagManager:
   - Obstacle
   - Enemy
   - Limit
+  - GamePlane
   layers:
   - Default
   - TransparentFX
