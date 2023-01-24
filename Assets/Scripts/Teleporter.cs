@@ -9,7 +9,7 @@ public class Teleporter : MonoBehaviour
 {
     private float elapsedTime = 0f;
     public Teleporter destination;
-    static bool activated = true;
+    bool activated = true;
     // Start is called before the first frame update
     void Start()
     {
@@ -23,7 +23,9 @@ public class Teleporter : MonoBehaviour
             elapsedTime += Time.deltaTime;
             if (elapsedTime > 5)
             {
+                GetComponent<MeshRenderer>().material.color = Color.white;
                 activated = true;
+                elapsedTime = 0;
             }
         }
 
@@ -33,8 +35,9 @@ public class Teleporter : MonoBehaviour
         if(other.gameObject.GetComponentInParent<Player>() != null && activated)
         {
             activated = false;
-            elapsedTime = 0;
+            destination.activated = false;
             GameObject.FindGameObjectWithTag("Player").transform.position = destination.transform.position + Vector3.up*5;
+            GetComponent<MeshRenderer>().material.color = Color.red;
         }
     }
 }

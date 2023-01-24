@@ -16,7 +16,6 @@ public partial class Enemy
             if (agent.enabled && Random.Range(0, 300) == 0)
             {//jump
                 agent.enabled = false;
-                GetComponent<MeshRenderer>().material.color = Color.green;
                 GetComponent<NavMeshObstacle>().enabled = true;
                 agent.enabled = false;
                 GetComponent<Rigidbody>().isKinematic = false;
