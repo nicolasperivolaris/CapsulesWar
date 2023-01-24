@@ -58,7 +58,7 @@ public class EnemiesManager : MonoBehaviour
             }
         }
             
-        MeshCollider collider = closest.GetComponent<MeshCollider>();
+        Collider collider = closest.GetComponent<Collider>();
 
         Vector3 position = collider.bounds.center + new Vector3(
         Random.Range(-collider.bounds.size.x / 2, collider.bounds.size.x / 2),
