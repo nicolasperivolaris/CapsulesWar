@@ -15,19 +15,22 @@ public partial class Enemy : MonoBehaviour
     const int LTBonus = 20;
     bool playerTouched = false;
     float distanceToPlayer = int.MaxValue;
-    public static long AvgLT = long.MaxValue;
-    long birthTime = 0;
-    long deathTime = 0;
+    public static float AvgLT = long.MaxValue;
+    public float lifeTime { get; private set; }
     internal GameObject laser;
 
     // Start is called before the first frame update
     void Start()
     {
-        birthTime = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+        Chromosome c = gameObject.AddComponent<Chromosome>();
+        c.Init();
+        if (UnityEngine.Random.Range(0, 10) == 0)
+            c.Mutate();
     }
 
     private void Update()
     {
+        lifeTime += Time.deltaTime;
         NavMeshAgent agent = GetComponent<NavMeshAgent>();/// TODO transfert dans gène 
         if (agent.enabled != true && GetComponent<Rigidbody>().velocity.magnitude < 0.01)
         {
@@ -49,21 +52,14 @@ public partial class Enemy : MonoBehaviour
     public float Fitness()
     {
         float ltBonus = LTBonus;
-        if(AvgLT / getLifeTime() < 1) ltBonus = 0;
+        if(AvgLT / lifeTime < 1) ltBonus = 0;
 
-        return playerTouched?PLAYER_KILLED_BONUS:0 + AvgLT/getLifeTime() * ltBonus + GetComponent<Chromosome>().getGenesFitBonus();
+        return playerTouched?PLAYER_KILLED_BONUS:0 + AvgLT/lifeTime * ltBonus + GetComponent<Chromosome>().getGenesFitBonus();
     }
 
     public void Killed()
     {
-        deathTime = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+        gameObject.SetActive(false);
         GetComponentInParent<EnemiesManager>().OnEnemyKilled(this);
-        Destroy(gameObject);
-    }
-
-    public long getLifeTime()
-    {
-        if(deathTime > 0) return deathTime-birthTime;
-        else return DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond - birthTime;
     }
 }

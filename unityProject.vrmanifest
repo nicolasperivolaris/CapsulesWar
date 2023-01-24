@@ -5,7 +5,7 @@
       "app_key": "application.generated.unity.capsuleswar.exe",
       "launch_type": "url",
       "url": "steam://launch/",
-      "action_manifest_path": "C:\\Users\\Irisib\\Desktop\\capsuleswar\\Assets\\StreamingAssets\\SteamVR\\actions.json",
+      "action_manifest_path": "C:\\Users\\zigan\\Documents\\GitHub\\CapsulesWar\\Assets\\StreamingAssets\\SteamVR\\actions.json",
       "strings": {
         "en_us": {
           "name": "CapsulesWar [Testing]"

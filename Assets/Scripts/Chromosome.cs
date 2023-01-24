@@ -8,6 +8,7 @@ public class Chromosome:MonoBehaviour
 {
     public int totalWeight { get; private set; }
     private Dictionary<string, Gene> genes = new Dictionary<string, Gene>();
+
     public void Crossover(Chromosome c1, Chromosome c2)
     {
         for(int i=0; i<genes.Count; i++)
@@ -23,6 +24,14 @@ public class Chromosome:MonoBehaviour
             Mutate() ;
     }
 
+    public void Init()
+    {
+        Add<Enemy.SpeedGene>();
+        Add<Enemy.JumpGene>();
+        Add<Enemy.LaserGene>();
+        Add<Enemy.FlyGene>();
+    }
+
     private void Add(Gene g)
     {
         System.Type[] typeArgs = { g.GetType() };
@@ -30,7 +39,7 @@ public class Chromosome:MonoBehaviour
         addMethod.Invoke(this, new object[] { g.value });
     }
 
-    private void Mutate()
+    public void Mutate()
     {
         int type = Random.Range(0, 3);
         switch (type)

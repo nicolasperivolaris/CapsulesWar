@@ -1,6 +1,9 @@
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.AI;
 using Random = UnityEngine.Random;
 
 public class EnemiesManager : MonoBehaviour
@@ -12,16 +15,25 @@ public class EnemiesManager : MonoBehaviour
     private float interval = 2f;
     // Start is called before the first frame update
     public Saber saber;
-    private HashSet<Enemy> deadEnemies = new HashSet<Enemy>();
+    private List<Enemy> enemySet;
+    private List<Enemy> deadEnemies;
     private const int DEAD_QUEUE_SIZE = 10;
     void Start()
     {
-        Chromosome c = gameObject.AddComponent<Chromosome>();
-        c.enabled = false;
-        c.Add<Enemy.SpeedGene>().enabled = false;
-        c.Add<Enemy.JumpGene>().enabled = false;
-        c.Add<Enemy.LaserGene>().enabled=false;
-        c.Add<Enemy.FlyGene>().enabled = false;
+        enemySet = new List<Enemy>();
+        deadEnemies = new List<Enemy>();
+
+        for(int i = 0; i<DEAD_QUEUE_SIZE*10; i++)
+        {
+            GameObject go = Instantiate(PrefabEnemy, Vector3.zero, Quaternion.identity);
+            go.SetActive(false);
+            go.transform.parent = transform;
+            Enemy enemy = go.AddComponent<Enemy>();
+            enemy.Player = Player;
+            enemy.laser = Laser;
+            enemySet.Add(enemy);
+        }
+            
     }
 
     void Update()
@@ -30,15 +42,7 @@ public class EnemiesManager : MonoBehaviour
         if (saber.IsActivated && elapsedTime >= interval)
         {
             elapsedTime = 0f;
-
-            GameObject go = Instantiate(PrefabEnemy, Vector3.zero, Quaternion.identity);
-            go.transform.parent = transform;
-            Enemy enemy = go.AddComponent<Enemy>();
-            enemy.Player = Player;
-            enemy.laser = Laser;
-            Chromosome c = enemy.AddComponent<Chromosome>();
-            c.Copy(GetComponent<Chromosome>());
-            DropEnemy(enemy);
+            DropEnemy(enemySet.First(e => !e.gameObject.activeInHierarchy && !deadEnemies.Contains(e)));
         }
     }
 
@@ -62,15 +66,16 @@ public class EnemiesManager : MonoBehaviour
         Random.Range(-collider.bounds.size.z / 2, collider.bounds.size.z / 2));  
 
         enemy.transform.position = position;
+        enemy.gameObject.SetActive(true);
     }
 
     public void OnEnemyKilled(Enemy e)
     {
         deadEnemies.Add(e);
-        long tempLT = 0;
+        float tempLT = 0;
         foreach (var dead in deadEnemies)
         {
-            tempLT += dead.getLifeTime();
+            tempLT += dead.lifeTime;
         }
         Enemy.AvgLT = tempLT/deadEnemies.Count;
     }

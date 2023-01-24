@@ -14,7 +14,7 @@ public partial class Enemy
             if(Random.Range(0, (int)(50*(6 - 1 / (value + .0001f)))) == 0)
             {
                 GameObject laser = Instantiate(GetComponentInParent<Enemy>().laser, transform.position, Quaternion.identity);
-                laser.GetComponent<ShotBehavior>().shooter = this;
+                laser.GetComponent<Shot>().shooter = this;
                 laser.transform.parent = transform.parent;
                 laser.transform.forward = transform.forward;
             }

@@ -18,7 +18,7 @@ public class ShotBehavior : MonoBehaviour {
 	void Update () {
 		if (Vector3.Distance(startPosition, transform.position) > MAX_DISTANCE)
 			Destroy(gameObject);
-		transform.position += transform.forward * Time.deltaTime * shooter.value * 10;
+		transform.position += transform.forward * 0.5f * Time.deltaTime * shooter.value * 10;
 	}
 
     private void OnTriggerEnter(Collider other)
@@ -26,7 +26,7 @@ public class ShotBehavior : MonoBehaviour {
 		PlayerBody player = other.GetComponent<PlayerBody>();
 		if (player != null)
 		{
-			player.Touched(this);
+			//player.Touched(this);
 			shooter.PlayerTouched++;
 		}
 		Destroy(gameObject);
