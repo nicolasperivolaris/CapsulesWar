@@ -23,7 +23,7 @@ public class ShotBehavior : MonoBehaviour {
 
     private void OnTriggerEnter(Collider other)
     {
-		PlayerBody player = other.GetComponent<PlayerBody>();
+		PlayerHead player = other.GetComponent<PlayerHead>();
 		if (player != null)
 		{
 			//player.Touched(this);

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using Valve.VR.InteractionSystem;
 
-public class Saber : MonoBehaviour
+public class Attachable : MonoBehaviour
 {
-    private Interactable interactable;
+    public Hand hand;
     public bool IsActivated = false;
     // Start is called before the first frame update
     void Start()
@@ -15,13 +15,24 @@ public class Saber : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (hand.grabPinchAction.stateDown)
+        {
+            hand.HoverLock(GetComponent<Interactable>());
+            // Attach this object to the hand
+            hand.AttachObject(gameObject, hand.GetGrabStarting(), Hand.defaultAttachmentFlags & (~Hand.AttachmentFlags.SnapOnAttach) & (~Hand.AttachmentFlags.DetachOthers) & (~Hand.AttachmentFlags.VelocityMovement));
+        }
+        if (hand.grabPinchAction.stateUp)
+        {
+            hand.DetachObject(gameObject);
+            // Call this to undo HoverLock
+            hand.HoverUnlock(GetComponent<Interactable>());
+        }
     }
 
     private void HandHoverUpdate(Hand hand)
     {
         IsActivated = true;
-        interactable = this.GetComponent<Interactable>();
+        Interactable interactable = this.GetComponent<Interactable>();
         GrabTypes startingGrabType = hand.GetGrabStarting();
         bool isGrabEnding = hand.IsGrabEnding(this.gameObject);
 

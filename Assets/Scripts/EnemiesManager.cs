@@ -14,7 +14,7 @@ public class EnemiesManager : MonoBehaviour
     private float elapsedTime = 0f;
     private float interval = 2f;
     // Start is called before the first frame update
-    public Saber saber;
+    public Attachable saber;
     private List<Enemy> enemySet;
     private List<Enemy> deadEnemies;
     private const int DEAD_QUEUE_SIZE = 10;
