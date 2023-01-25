@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 1235056987033908516}
   - component: {fileID: 6183154012994007883}
   - component: {fileID: 2867436191927702478}
-  - component: {fileID: 8886015705664651606}
   - component: {fileID: 6050614690602054840}
   - component: {fileID: 1894778539489918507}
   - component: {fileID: 5663145663068472682}
@@ -89,23 +88,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!191 &8886015705664651606
-OffMeshLink:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8710533614542973576}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_AreaIndex: 0
-  m_AgentTypeID: 0
-  m_Start: {fileID: 0}
-  m_End: {fileID: 0}
-  m_CostOverride: -1
-  m_BiDirectional: 1
-  m_Activated: 1
-  m_AutoUpdatePositions: 0
 --- !u!54 &6050614690602054840
 Rigidbody:
   m_ObjectHideFlags: 0

@@ -75,7 +75,7 @@ public class EnemiesManager : MonoBehaviour
         float tempLT = 0;
         foreach (var dead in deadEnemies)
         {
-            tempLT += dead.lifeTime;
+            tempLT += dead.LifeTime;
         }
         Enemy.AvgLT = tempLT/deadEnemies.Count;
     }

@@ -32,12 +32,25 @@ public class Teleporter : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.GetComponentInParent<Player>() != null && activated)
-        {
-            activated = false;
-            destination.activated = false;
-            GameObject.FindGameObjectWithTag("Player").transform.position = destination.transform.position + Vector3.up*5;
-            GetComponent<MeshRenderer>().material.color = Color.red;
-        }
+        Player player = other.gameObject.GetComponent<Player>();
+        if(player != null)
+            if(activated)
+            {
+                activated = false;
+                destination.activated = false;
+                Rigidbody r = player.GetComponent<Rigidbody>();
+                r.useGravity = true;
+                r.isKinematic = false;
+                r.constraints &= ~RigidbodyConstraints.FreezePositionY;
+                player.transform.position = destination.transform.position + Vector3.up*5;
+                GetComponent<MeshRenderer>().material.color = Color.red;
+            }
+            else
+            {
+                Rigidbody r = player.GetComponent<Rigidbody>();
+                r.useGravity = false;
+                r.isKinematic = true;
+                r.constraints |= RigidbodyConstraints.FreezePositionY;
+            }
     }
 }

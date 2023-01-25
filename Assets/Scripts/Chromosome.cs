@@ -27,9 +27,9 @@ public class Chromosome:MonoBehaviour
     public void Init()
     {
         Add<Enemy.SpeedGene>();
-        Add<Enemy.JumpGene>();
-        Add<Enemy.LaserGene>();
-        Add<Enemy.FlyGene>();
+        //Add<Enemy.JumpGene>();
+        //Add<Enemy.LaserGene>();
+        //Add<Enemy.FlyGene>();
     }
 
     private void Add(Gene g)

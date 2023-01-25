@@ -13,7 +13,7 @@ public partial class Enemy
 
         void Update()
         {
-            if (Random.Range(0, (int)(50 * (6 - 1 / (value + .0001f)))) == 0)
+            if (Random.Range(0, (int)(50 * (6 / (value + .0001f)))) == 0)
             {
                 flying = true;
                 GetComponent<NavMeshAgent>().enabled = false;
@@ -27,7 +27,7 @@ public partial class Enemy
                     flying = false;
                 } 
 
-                GetComponent<Rigidbody>().velocity = GetComponent<NavMeshAgent>().speed * transform.forward + Vector3.up ;
+                GetComponent<Rigidbody>().velocity = value * GetComponent<NavMeshAgent>().speed * transform.forward + Vector3.up*2 ;
                 flyingTime += Time.deltaTime;
             }
         }
