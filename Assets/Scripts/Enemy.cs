@@ -69,9 +69,9 @@ public partial class Enemy : MonoBehaviour
 
     public void OnCollisionStay(Collision collision)
     {
-        if(collision.gameObject == Player.gameObject)
+        if(collision.gameObject == Player.GetComponentInParent<Player>().gameObject || collision.gameObject.GetComponent<BodyCollider>() != null || collision.gameObject.GetComponent<PlayerHead>() != null)
         {
-            //Player.GetComponent<PlayerBody>().Touched(this);
+           Player.GetComponentInChildren<PlayerHead>().Touched(this);
         }
     }
 

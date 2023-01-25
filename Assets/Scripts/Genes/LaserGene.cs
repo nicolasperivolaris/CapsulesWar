@@ -6,7 +6,7 @@ public partial class Enemy
     public class LaserGene : Gene
     {
         public int PlayerTouched { get; set; }
-        public LaserGene() : base(Gene.LASER, 0, 0)
+        public LaserGene() : base(Gene.LASER, 8, 0)
         {}
 
         void Update()
