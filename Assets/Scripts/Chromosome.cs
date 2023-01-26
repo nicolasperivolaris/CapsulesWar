@@ -14,7 +14,7 @@ public class Chromosome:MonoBehaviour
         for(int i=0; i<genes.Count; i++)
         {
             Gene toAdd = null;
-            if (i < genes.Count / 2)
+            if (Random.Range(0, 2) == 0)
                 toAdd = c1.genes.ElementAt(i).Value;
             else
                 toAdd = c2.genes.ElementAt(i).Value;
@@ -22,6 +22,12 @@ public class Chromosome:MonoBehaviour
         }
         if(Random.Range(0,10) == 0)
             Mutate() ;
+    }
+
+    private void Start()
+    {
+        if (genes.Count == 0)
+            Init();
     }
 
     public void Init()

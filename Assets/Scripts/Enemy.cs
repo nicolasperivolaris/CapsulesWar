@@ -11,19 +11,24 @@ using static UnityEngine.EventSystems.EventTrigger;
 public partial class Enemy : MonoBehaviour
 {
     public GameObject Player;
+    internal Transform aim;
     const int PLAYER_KILLED_BONUS = 50;
-    const int LTBonus = 20;
+    static int DISTANCE_BONUS = 10;
     bool playerTouched = false;
-    public float distanceToPlayer = int.MaxValue;
+    public float popUpDist = -1;
+    float distanceToPlayer = int.MaxValue;
     public static float AvgLT = long.MaxValue;
     public float LifeTime { get; private set; }
     public GameObject laser;
+    internal Enemy[] parents;
 
     // Start is called before the first frame update
     void Start()
     {
         Chromosome c = gameObject.AddComponent<Chromosome>();
         c.Init();
+        if (parents != null)
+            c.Crossover(parents[0].GetComponent<Chromosome>(), parents[1].GetComponent<Chromosome>());
         if (UnityEngine.Random.Range(0, 10) == 0)
             c.Mutate();
     }
@@ -53,7 +58,7 @@ public partial class Enemy : MonoBehaviour
             GetComponent<FlyGene>().enabled = true;
         transform.LookAt(Player.transform);
 
-        if (transform.position.y < -20)
+        if (transform.position.y < -20 || LifeTime > 40)
         {
             Killed();
         }
@@ -61,17 +66,15 @@ public partial class Enemy : MonoBehaviour
 
     public float Fitness()
     {
-        float ltBonus = LTBonus;
-        if(AvgLT / LifeTime < 1) ltBonus = 0;
-
-        return playerTouched?PLAYER_KILLED_BONUS:0 + AvgLT/LifeTime * ltBonus + GetComponent<Chromosome>().getGenesFitBonus();
+        return (playerTouched?PLAYER_KILLED_BONUS:0) + DISTANCE_BONUS * popUpDist/LifeTime + GetComponent<Chromosome>().getGenesFitBonus();
     }
 
     public void OnCollisionStay(Collision collision)
     {
-        if(collision.gameObject == Player.GetComponentInParent<Player>().gameObject || collision.gameObject.GetComponent<BodyCollider>() != null || collision.gameObject.GetComponent<PlayerHead>() != null)
+        if(collision.gameObject == Player.GetComponentInParent<Player>().gameObject || collision.gameObject.GetComponent<PlayerHead>() != null)
         {
-           Player.GetComponentInChildren<PlayerHead>().Touched(this);
+           GameObject.Find("HeadCollider").GetComponent<PlayerHead>().Touched(this);
+            playerTouched = true;
         }
     }
 
@@ -79,5 +82,17 @@ public partial class Enemy : MonoBehaviour
     {
         gameObject.SetActive(false);
         GetComponentInParent<EnemiesManager>().OnEnemyKilled(this);
+        Debug.Log(ToString());
+    }
+
+    public override string ToString()
+    {
+        string desc = "Killed : ";
+        foreach (Gene g in GetComponent<Chromosome>().GetGenes().Values)
+        {
+            desc += g.type + " : " + g.proportionnalValue() + ", "; 
+        }
+        desc += "total : " + GetComponent<Chromosome>().totalWeight;
+        return desc;
     }
 }

@@ -35,5 +35,10 @@ public abstract class Gene : MonoBehaviour
         
     }
 
+    public float proportionnalValue()
+    {
+        return (value / (float)GetComponent<Chromosome>().totalWeight) + 0.00001f;
+    }
+
     public abstract int getFitBonus();
 }

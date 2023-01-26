@@ -15,13 +15,13 @@ public class Attachable : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (hand.grabPinchAction.stateDown)
+        if (hand.GetGrabStarting() != GrabTypes.None)
         {
             hand.HoverLock(GetComponent<Interactable>());
             // Attach this object to the hand
             hand.AttachObject(gameObject, hand.GetGrabStarting(), Hand.defaultAttachmentFlags & (~Hand.AttachmentFlags.SnapOnAttach) & (~Hand.AttachmentFlags.DetachOthers) & (~Hand.AttachmentFlags.VelocityMovement));
         }
-        if (hand.grabPinchAction.stateUp)
+        if (hand.GetGrabEnding() != GrabTypes.None)
         {
             hand.DetachObject(gameObject);
             // Call this to undo HoverLock

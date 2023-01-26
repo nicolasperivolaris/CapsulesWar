@@ -21,12 +21,12 @@ public class PlayerHead : MonoBehaviour
 
     public void Touched(Shot shot)
     {
-        pv -= 20;
+        pv = pv<20?0:pv-20;
     }
 
     public void Touched(Enemy e)
     {
-        pv -= 0.2f;
+        pv = pv < 0.2f ? 0 : pv - 0.2f;
     }
 
 }

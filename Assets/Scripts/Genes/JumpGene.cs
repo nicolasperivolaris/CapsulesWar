@@ -13,15 +13,15 @@ public partial class Enemy
         {
             NavMeshAgent agent = GetComponent<NavMeshAgent>();
             
-            if (agent.enabled && Random.Range(0, 300) == 0)
-            {//jump
+            if (agent.enabled && Random.Range(0, (int)(50 * (1 / (2 * proportionnalValue())))) == 0)
+            {
                 agent.enabled = false;
                 GetComponent<NavMeshObstacle>().enabled = true;
                 agent.enabled = false;
                 GetComponent<Rigidbody>().isKinematic = false;
                 Vector3 rbV = GetComponent<Rigidbody>().velocity;
                 Vector3 nmaV = agent.velocity;
-                GetComponent<Rigidbody>().velocity = agent.transform.forward*5 + new Vector3(0,5, 0);
+                GetComponent<Rigidbody>().velocity = agent.transform.forward*((int)10*proportionnalValue()) + new Vector3(0, ((int)10 * proportionnalValue()), 0);
             }
         }
 

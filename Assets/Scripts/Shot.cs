@@ -12,7 +12,7 @@ public class Shot : MonoBehaviour
     Vector3 startPosition;
     const int MAX_LIFT_TIME = 3;
     float lifeTime = 0;
-    public int speed = 6;
+    public int speed = 4;
 
     // Use this for initialization
     void Start()

@@ -6,17 +6,17 @@ public partial class Enemy
     public class LaserGene : Gene
     {
         public int PlayerTouched { get; set; }
-        public LaserGene() : base(Gene.LASER, 8, 0)
+        public LaserGene() : base(Gene.LASER, 1, 0)
         {}
 
         void Update()
         {
-            if(Random.Range(0, (int)(50*(6 / (value + .0001f)))) == 0)
+            if(Random.Range(0, (int)(150*(1 /(2*proportionnalValue())))) == 0)
             {
                 GameObject laser = Instantiate(GetComponentInParent<Enemy>().laser, transform.position, Quaternion.identity);
                 laser.GetComponent<Shot>().shooter = this;
                 laser.transform.parent = transform.parent;
-                laser.transform.forward = transform.forward;
+                laser.transform.LookAt(GetComponentInParent<Enemy>().aim);
             }
         }
 

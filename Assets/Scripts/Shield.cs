@@ -6,7 +6,6 @@ using Valve.VR.InteractionSystem;
 
 public class Shield : MonoBehaviour
 {
-    public Enemy enemy;
     // Start is called before the first frame update
     void Start()
     {
